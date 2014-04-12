@@ -232,7 +232,10 @@ time_t jmktime(struct jtm* jtm)
     if (!jtm)
         return (time_t) (-1);
     tzset();
+    jalali_normalize(jtm);
 
+    // yday
+    jalali_create_days_from_date(jtm);
     int p = jalali_get_diff(jtm);
     time_t t;
     t = ((time_t) p * (time_t) J_DAY_LENGTH_IN_SECONDS) +
@@ -240,6 +243,9 @@ time_t jmktime(struct jtm* jtm)
         + ((time_t) jtm->tm_min *
            (time_t) J_MINUTE_LENGTH_IN_SECONDS) + (time_t) jtm->tm_sec -
         ((time_t) jtm->tm_gmtoff);
+
+    // wday and tzinfo
+    jalali_get_date(p, jtm);
     return t;
 }
 

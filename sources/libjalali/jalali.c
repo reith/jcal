@@ -361,11 +361,7 @@ int jalali_year_month_days(int year, int month) {
     return dim;
 }
 
-/*
- * Updates a jalali date struct fields based on tm_year, tm_mon and tm_mday
- */
-void jalali_update(struct jtm* jtm)
-{
+void jalali_normalize(struct jtm* jtm) {
     int dim; // number of days in current month
     RECLUSTER(jtm->tm_min, jtm->tm_sec, J_MINUTE_LENGTH_IN_SECONDS);
     RECLUSTER(jtm->tm_hour, jtm->tm_min, J_HOUR_LENGTH_IN_MINUTES);
@@ -397,7 +393,14 @@ void jalali_update(struct jtm* jtm)
             }
         }
     }
+}
 
+/*
+ * Updates a jalali date struct fields based on tm_year, tm_mon and tm_mday
+ */
+void jalali_update(struct jtm* jtm)
+{
+    jalali_normalize(jtm);
     /* date is normalized, compute tm_wday and tm_yday */
     jalali_create_days_from_date(jtm);
     jalali_get_date(jalali_get_diff(jtm), jtm);
